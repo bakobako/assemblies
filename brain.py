@@ -519,8 +519,8 @@ class Brain:
       from_area_winners_set = set(from_area_winners)
       from_area_connectomes = self.connectomes[from_area_name]
       # Q: Can we replace .pad() with numpy.resize() here?
-      the_connectome = from_area_connectomes[target_area_name] = np.pad(
-          from_area_connectomes[target_area_name],
+      the_connectome = from_area_connectomes[target_area.name] = np.pad(
+          from_area_connectomes[target_area.name],
           ((0, 0), (0, num_first_winners_processed)))
       for i in range(num_first_winners_processed):
         total_in = inputs_by_first_winner_index[i][num_inputs_processed]
@@ -546,15 +546,15 @@ class Brain:
     for other_area_name, other_area in self.area_by_name.items():
       other_area_connectomes = self.connectomes[other_area_name]
       if other_area_name not in from_areas:
-        the_other_area_connectome = other_area_connectomes[target_area_name] = (
+        the_other_area_connectome = other_area_connectomes[target_area.name] = (
           np.pad(
-              other_area_connectomes[target_area_name],
+              other_area_connectomes[target_area.name],
               ((0, 0), (0, num_first_winners_processed))))
         the_other_area_connectome[:, target_area.w:] = rng.binomial(
           1, self.p, size=(the_other_area_connectome.shape[0],
                            target_area._new_w - target_area.w))
       # add num_first_winners_processed rows, all bernoulli with probability p
-      target_area_connectomes = self.connectomes[target_area_name]
+      target_area_connectomes = self.connectomes[target_area.name]
       the_target_area_connectome = target_area_connectomes[other_area_name] = (
         np.pad(
           target_area_connectomes[other_area_name],
@@ -564,7 +564,7 @@ class Brain:
           size=(target_area._new_w - target_area.w,
                 the_target_area_connectome.shape[1]))
       if verbose >= 2:
-        print(f"Connectome of {target_area_name!r} to {other_area_name!r} "
-              "is now:", self.connectomes[target_area_name][other_area_name])
+        print(f"Connectome of {target_area.name!r} to {other_area_name!r} "
+              "is now:", self.connectomes[target_area.name][other_area_name])
 
     return num_first_winners_processed
